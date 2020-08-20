@@ -190,7 +190,6 @@ class ProductDetailFragment : BaseProductFragment(), OnGalleryImageClickListener
             true -> {
                 startAddImageContainer()
                 imageGalleryVisibility = false
-                productDetail_addMoreContainer.isVisible = true
             }
             else -> {
                 addImageContainer.isVisible = false
@@ -201,6 +200,7 @@ class ProductDetailFragment : BaseProductFragment(), OnGalleryImageClickListener
         addNewProduct.localProductImages?.let {
             imageGallery.showProductImages(it, this@ProductDetailFragment)
         }
+        productDetail_addMoreContainer.isVisible = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

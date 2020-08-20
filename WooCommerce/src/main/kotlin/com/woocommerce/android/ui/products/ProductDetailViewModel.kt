@@ -490,6 +490,7 @@ class ProductDetailViewModel @AssistedInject constructor(
             is ExitImages -> isUploadingImages || hasImageChanges()
             else -> isProductDetailUpdated && isProductSubDetailUpdated
         }
+
         if (isProductUpdated && event.shouldShowDiscardDialog) {
             triggerEvent(ShowDiscardDialog(
                 positiveBtnAction = DialogInterface.OnClickListener { _, _ ->
@@ -600,7 +601,7 @@ class ProductDetailViewModel @AssistedInject constructor(
 
     fun onProductTitleChanged(title: String) {
         when (navArgs.isAddProduct) {
-            true -> Unit // todo
+            true -> updateAddNewProductDraft(title = title)
             else -> updateProductDraft(title = title)
         }
     }
@@ -739,7 +740,6 @@ class ProductDetailViewModel @AssistedInject constructor(
                 }
             }
         }
-        fetchBottomSheetList()
     }
 
     fun fetchBottomSheetList() {
