@@ -29,6 +29,7 @@ import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.aztec.AztecEditorFragment
 import com.woocommerce.android.ui.aztec.AztecEditorFragment.Companion.ARG_AZTEC_EDITOR_TEXT
 import com.woocommerce.android.ui.main.MainActivity.NavigationResult
+import com.woocommerce.android.ui.products.ProductDetailViewModel.AddNewProductDraft
 import com.woocommerce.android.ui.products.ProductDetailViewModel.LaunchUrlInChromeTab
 import com.woocommerce.android.ui.products.ProductDetailViewModel.ProductExitEvent.ExitProductDetail
 import com.woocommerce.android.ui.products.ProductNavigationTarget.ViewProductDetailBottomSheet
@@ -124,11 +125,8 @@ class ProductDetailFragment : BaseProductFragment(), OnGalleryImageClickListener
             new.showBottomSheetButton?.takeIfNotEqualTo(old?.showBottomSheetButton) {
                 productDetail_addMoreContainer.visibility = if (it) View.VISIBLE else View.GONE
             }
-            new.isAddNewProduct?.takeIfNotEqualTo(old?.isAddNewProduct) {
-                showDefaultAddProductDetails()
-            }
-            new.addProductLocalUris?.takeIfNotEqualTo(old?.addProductLocalUris) {
-                showAddProductSelectedImages()
+            new.addNewProductDraft?.takeIfNotEqualTo(old?.addNewProductDraft) {
+                showAddNewProductDetails(it)
             }
         }
 
@@ -186,17 +184,23 @@ class ProductDetailFragment : BaseProductFragment(), OnGalleryImageClickListener
         }
     }
 
-    private fun showDefaultAddProductDetails() {
-        addImageContainer.isVisible = true
-        imageGallery.isVisible = false
-        startAddImageContainer()
-        productDetail_addMoreContainer.isVisible = true
-    }
-
-    private fun showAddProductSelectedImages() {
-        addImageContainer.isVisible = false
-        imageGallery.isVisible = true
-        imageGallery.showProductImages(viewModel.productAddImages, this@ProductDetailFragment)
+    private fun showAddNewProductDetails(addNewProduct: AddNewProductDraft) {
+        val imageGalleryVisibility: Boolean
+        when (addNewProduct.localImageUris.isNullOrEmpty()) {
+            true -> {
+                startAddImageContainer()
+                imageGalleryVisibility = false
+                productDetail_addMoreContainer.isVisible = true
+            }
+            else -> {
+                addImageContainer.isVisible = false
+                imageGalleryVisibility = true
+            }
+        }
+        imageGallery.isVisible = imageGalleryVisibility
+        addNewProduct.localProductImages?.let {
+            imageGallery.showProductImages(it, this@ProductDetailFragment)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -312,7 +316,7 @@ class ProductDetailFragment : BaseProductFragment(), OnGalleryImageClickListener
                 if (result.getBoolean(AztecEditorFragment.ARG_AZTEC_HAS_CHANGES)) {
                     val value = result.getString(ARG_AZTEC_EDITOR_TEXT) ?: ""
                     when (navArgs.isAddProduct) {
-                        true -> viewModel.updateProductAddCards(value)
+                        true -> viewModel.updateAddNewProductDraft(description = value)
                         else -> viewModel.updateProductDraft(description = value)
                     }
                     changesMade()
