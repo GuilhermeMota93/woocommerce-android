@@ -50,7 +50,6 @@ class ProductDetailCardBuilder(
     private fun isSimple(product: Product) = product.type == SIMPLE
 
     fun buildPropertyCards(product: Product): List<ProductPropertyCard> {
-
         val cards = mutableListOf<ProductPropertyCard>()
 
         cards.addIfNotEmpty(getPrimaryCard(product))

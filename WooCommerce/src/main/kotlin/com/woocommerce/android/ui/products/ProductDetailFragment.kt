@@ -29,7 +29,7 @@ import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.aztec.AztecEditorFragment
 import com.woocommerce.android.ui.aztec.AztecEditorFragment.Companion.ARG_AZTEC_EDITOR_TEXT
 import com.woocommerce.android.ui.main.MainActivity.NavigationResult
-import com.woocommerce.android.ui.products.ProductDetailViewModel.AddNewProductDraft
+import com.woocommerce.android.ui.products.ProductDetailViewModel.AddNewProduct
 import com.woocommerce.android.ui.products.ProductDetailViewModel.LaunchUrlInChromeTab
 import com.woocommerce.android.ui.products.ProductDetailViewModel.ProductExitEvent.ExitProductDetail
 import com.woocommerce.android.ui.products.ProductNavigationTarget.ViewProductDetailBottomSheet
@@ -184,7 +184,7 @@ class ProductDetailFragment : BaseProductFragment(), OnGalleryImageClickListener
         }
     }
 
-    private fun showAddNewProductDetails(addNewProduct: AddNewProductDraft) {
+    private fun showAddNewProductDetails(addNewProduct: AddNewProduct) {
         val imageGalleryVisibility: Boolean
         when (addNewProduct.localImageUris.isNullOrEmpty()) {
             true -> {

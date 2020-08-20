@@ -130,10 +130,10 @@ class ProductDetailViewModel @AssistedInject constructor(
     // view state for the product detail screen
     val productDetailViewStateData = LiveDataDelegate(savedState, ProductDetailViewState()) { old, new ->
         if (old?.productDraft != new.productDraft) {
-            updateCards()
+            updateEditProductCards()
         }
         if (old?.addNewProductDraft != new.addNewProductDraft) {
-            updateNewProductAddCards()
+            updateAddNewProductCards()
         }
     }
     private var viewState by productDetailViewStateData
@@ -198,8 +198,7 @@ class ProductDetailViewModel @AssistedInject constructor(
     }
 
     private fun startAddNewProduct() {
-        viewState = viewState.copy(addNewProductDraft = AddNewProductDraft())
-        setupProductDetailCards()
+        viewState = viewState.copy(addNewProductDraft = AddNewProduct())
     }
 
     fun getProduct() = viewState
@@ -719,31 +718,28 @@ class ProductDetailViewModel @AssistedInject constructor(
         EventBus.getDefault().unregister(this)
     }
 
-    private fun updateCards() {
-        viewState.productDraft?.let {
-            setupProductDetailCards(product = it)
+    private fun updateEditProductCards() {
+        viewState.productDraft?.let { product ->
+            launch(dispatchers.computation) {
+                val cards = editProductCardBuilder.buildPropertyCards(product)
+                withContext(dispatchers.main) {
+                    _productDetailCards.value = cards
+                }
+            }
         }
         fetchBottomSheetList()
     }
 
-    private fun setupProductDetailCards(product: Product? = null): Job {
-        return launch(dispatchers.computation) {
-            val cards = when (navArgs.isAddProduct) {
-                true -> addProductCardBuilder.buildPropertyCards()
-                else -> {
-                    product?.let {
-                        editProductCardBuilder.buildPropertyCards(product = it)
-                    }
+    private fun updateAddNewProductCards() {
+        viewState.addNewProductDraft?.let { newProduct ->
+            launch(dispatchers.computation) {
+                val cards = addProductCardBuilder.buildPropertyCards(newProduct)
+                withContext(dispatchers.main) {
+                    _productDetailCards.value = cards
                 }
             }
-            withContext(dispatchers.main) {
-                _productDetailCards.value = cards
-            }
         }
-    }
-
-    fun updateNewProductAddCards() {
-        addProductCardBuilder.updateCards("")
+        fetchBottomSheetList()
     }
 
     fun fetchBottomSheetList() {
@@ -1520,7 +1516,7 @@ class ProductDetailViewModel @AssistedInject constructor(
         val storedPassword: String? = null,
         val draftPassword: String? = null,
         val showBottomSheetButton: Boolean? = null,
-        val addNewProductDraft: AddNewProductDraft? = null
+        val addNewProductDraft: AddNewProduct? = null
     ) : Parcelable {
         val isPasswordChanged: Boolean
             get() = storedPassword != draftPassword
@@ -1579,7 +1575,7 @@ class ProductDetailViewModel @AssistedInject constructor(
     ) : Parcelable
 
     @Parcelize
-    data class AddNewProductDraft(
+    data class AddNewProduct(
         val title: String? = null,
         val description: String? = null,
         val localImageUris: List<Uri>? = null,
