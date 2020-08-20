@@ -620,6 +620,12 @@
     <string name="bottom_sheet_short_description_desc">A brief excerpt about your product</string>
 
     <!--
+        New Product add details
+    -->
+    <string name="product_add_details_placeholder_title">Enter title</string>
+    <string name="product_add_details_placeholder_description">@string/product_description_empty</string>
+
+    <!--
         Variations
     -->
     <string name="variation_detail_fetch_variation_error">Error fetching variation</string>

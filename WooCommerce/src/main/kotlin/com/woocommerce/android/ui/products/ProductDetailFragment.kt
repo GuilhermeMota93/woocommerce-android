@@ -272,8 +272,8 @@ class ProductDetailFragment : BaseProductFragment(), OnGalleryImageClickListener
         if (show) {
             hideProgressDialog()
             progressDialog = CustomProgressDialog.show(
-                    getString(R.string.product_update_dialog_title),
-                    getString(R.string.product_update_dialog_message)
+                getString(R.string.product_update_dialog_title),
+                getString(R.string.product_update_dialog_message)
             ).also { it.show(parentFragmentManager, CustomProgressDialog.TAG) }
             progressDialog?.isCancelable = false
         } else {
@@ -310,22 +310,27 @@ class ProductDetailFragment : BaseProductFragment(), OnGalleryImageClickListener
         when (requestCode) {
             RequestCodes.AZTEC_EDITOR_PRODUCT_DESCRIPTION -> {
                 if (result.getBoolean(AztecEditorFragment.ARG_AZTEC_HAS_CHANGES)) {
-                    viewModel.updateProductDraft(description = result.getString(ARG_AZTEC_EDITOR_TEXT))
+                    val value = result.getString(ARG_AZTEC_EDITOR_TEXT) ?: ""
+                    when (navArgs.isAddProduct) {
+                        true -> viewModel.updateProductAddCards(value)
+                        else -> viewModel.updateProductDraft(description = value)
+                    }
                     changesMade()
                 }
             }
             RequestCodes.AZTEC_EDITOR_PRODUCT_SHORT_DESCRIPTION -> {
                 if (result.getBoolean(AztecEditorFragment.ARG_AZTEC_HAS_CHANGES)) {
-                    viewModel.updateProductDraft(shortDescription = result.getString(ARG_AZTEC_EDITOR_TEXT))
+                    val value = result.getString(ARG_AZTEC_EDITOR_TEXT) ?: ""
+                    viewModel.updateProductDraft(shortDescription = value)
                     changesMade()
                 }
             }
             RequestCodes.WPMEDIA_LIBRARY_PICKER -> {
                 result.getParcelableArrayList<Product.Image>(WPMediaPickerFragment.ARG_SELECTED_IMAGES)
-                        ?.let {
-                            viewModel.addProductImageListToDraft(it)
-                            changesMade()
-                        }
+                    ?.let {
+                        viewModel.addProductImageListToDraft(it)
+                        changesMade()
+                    }
             }
         }
     }

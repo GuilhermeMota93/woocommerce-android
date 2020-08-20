@@ -179,8 +179,12 @@ class ProductDetailViewModel @AssistedInject constructor(
     private val _productDetailCards = MutableLiveData<List<ProductPropertyCard>>()
     val productDetailCards: LiveData<List<ProductPropertyCard>> = _productDetailCards
 
-    private val cardBuilder by lazy {
+    private val editProductCardBuilder by lazy {
         ProductDetailCardBuilder(this, resources, currencyFormatter, parameters)
+    }
+
+    private val addProductCardBuilder by lazy {
+        AddProductDetailCardBuilder(this, resources)
     }
 
     private val _productDetailBottomSheetList = MutableLiveData<List<ProductDetailBottomSheetUiItem>>()
@@ -203,9 +207,8 @@ class ProductDetailViewModel @AssistedInject constructor(
     }
 
     private fun startAddNewProduct() {
-        viewState = viewState.copy(
-            isAddNewProduct = true
-        )
+        viewState = viewState.copy(isAddNewProduct = true)
+        setupProductDetailCards()
     }
 
     fun getProduct() = viewState
@@ -313,9 +316,14 @@ class ProductDetailViewModel @AssistedInject constructor(
     fun hasExternalLinkChanges() = viewState.storedProduct?.hasExternalLinkChanges(viewState.productDraft) ?: false
 
     fun hasChanges(): Boolean {
-        return viewState.storedProduct?.let { product ->
-            viewState.productDraft?.isSameProduct(product) == false
-        } ?: false
+        return when (navArgs.isAddProduct) {
+            true -> true
+            else -> {
+                viewState.storedProduct?.let { product ->
+                    viewState.productDraft?.isSameProduct(product) == false
+                } ?: false
+            }
+        }
     }
 
     /**
@@ -601,7 +609,10 @@ class ProductDetailViewModel @AssistedInject constructor(
     }
 
     fun onProductTitleChanged(title: String) {
-        updateProductDraft(title = title)
+        when (navArgs.isAddProduct) {
+            true -> Unit // todo
+            else -> updateProductDraft(title = title)
+        }
     }
 
     /**
@@ -658,50 +669,50 @@ class ProductDetailViewModel @AssistedInject constructor(
         viewState.productDraft?.let { product ->
             val currentProduct = product.copy()
             val updatedProduct = product.copy(
-                    description = description ?: product.description,
-                    shortDescription = shortDescription ?: product.shortDescription,
-                    name = title ?: product.name,
-                    sku = sku ?: product.sku,
-                    slug = slug ?: product.slug,
-                    manageStock = manageStock ?: product.manageStock,
-                    stockStatus = stockStatus ?: product.stockStatus,
-                    soldIndividually = soldIndividually ?: product.soldIndividually,
-                    backorderStatus = backorderStatus ?: product.backorderStatus,
-                    stockQuantity = stockQuantity?.toInt() ?: product.stockQuantity,
-                    images = images ?: product.images,
-                    regularPrice = regularPrice ?: product.regularPrice,
-                    salePrice = salePrice ?: product.salePrice,
-                    isOnSale = isOnSale ?: product.isOnSale,
-                    isVirtual = isVirtual ?: product.isVirtual,
-                    taxStatus = taxStatus ?: product.taxStatus,
-                    taxClass = taxClass ?: product.taxClass,
-                    length = length ?: product.length,
-                    width = width ?: product.width,
-                    height = height ?: product.height,
-                    weight = weight ?: product.weight,
-                    shippingClass = shippingClass ?: product.shippingClass,
-                    shippingClassId = shippingClassId ?: product.shippingClassId,
-                    isSaleScheduled = isSaleScheduled ?: product.isSaleScheduled,
-                    status = productStatus ?: product.status,
-                    catalogVisibility = catalogVisibility ?: product.catalogVisibility,
-                    isFeatured = isFeatured ?: product.isFeatured,
-                    reviewsAllowed = reviewsAllowed ?: product.reviewsAllowed,
-                    purchaseNote = purchaseNote ?: product.purchaseNote,
-                    externalUrl = externalUrl ?: product.externalUrl,
-                    buttonText = buttonText ?: product.buttonText,
-                    menuOrder = menuOrder ?: product.menuOrder,
-                    categories = categories ?: product.categories,
-                    tags = tags ?: product.tags,
-                    type = type ?: product.type,
-                    groupedProductIds = groupedProductIds ?: product.groupedProductIds,
-                    saleEndDateGmt = if (isSaleScheduled == true ||
-                            (isSaleScheduled == null && currentProduct.isSaleScheduled)) {
-                        if (saleEndDate != null) saleEndDate.value else product.saleEndDateGmt
-                    } else viewState.storedProduct?.saleEndDateGmt,
-                    saleStartDateGmt = if (isSaleScheduled == true ||
-                            (isSaleScheduled == null && currentProduct.isSaleScheduled)) {
-                        saleStartDate ?: product.saleStartDateGmt
-                    } else viewState.storedProduct?.saleStartDateGmt
+                description = description ?: product.description,
+                shortDescription = shortDescription ?: product.shortDescription,
+                name = title ?: product.name,
+                sku = sku ?: product.sku,
+                slug = slug ?: product.slug,
+                manageStock = manageStock ?: product.manageStock,
+                stockStatus = stockStatus ?: product.stockStatus,
+                soldIndividually = soldIndividually ?: product.soldIndividually,
+                backorderStatus = backorderStatus ?: product.backorderStatus,
+                stockQuantity = stockQuantity?.toInt() ?: product.stockQuantity,
+                images = images ?: product.images,
+                regularPrice = regularPrice ?: product.regularPrice,
+                salePrice = salePrice ?: product.salePrice,
+                isOnSale = isOnSale ?: product.isOnSale,
+                isVirtual = isVirtual ?: product.isVirtual,
+                taxStatus = taxStatus ?: product.taxStatus,
+                taxClass = taxClass ?: product.taxClass,
+                length = length ?: product.length,
+                width = width ?: product.width,
+                height = height ?: product.height,
+                weight = weight ?: product.weight,
+                shippingClass = shippingClass ?: product.shippingClass,
+                shippingClassId = shippingClassId ?: product.shippingClassId,
+                isSaleScheduled = isSaleScheduled ?: product.isSaleScheduled,
+                status = productStatus ?: product.status,
+                catalogVisibility = catalogVisibility ?: product.catalogVisibility,
+                isFeatured = isFeatured ?: product.isFeatured,
+                reviewsAllowed = reviewsAllowed ?: product.reviewsAllowed,
+                purchaseNote = purchaseNote ?: product.purchaseNote,
+                externalUrl = externalUrl ?: product.externalUrl,
+                buttonText = buttonText ?: product.buttonText,
+                menuOrder = menuOrder ?: product.menuOrder,
+                categories = categories ?: product.categories,
+                tags = tags ?: product.tags,
+                type = type ?: product.type,
+                groupedProductIds = groupedProductIds ?: product.groupedProductIds,
+                saleEndDateGmt = if (isSaleScheduled == true ||
+                    (isSaleScheduled == null && currentProduct.isSaleScheduled)) {
+                    if (saleEndDate != null) saleEndDate.value else product.saleEndDateGmt
+                } else viewState.storedProduct?.saleEndDateGmt,
+                saleStartDateGmt = if (isSaleScheduled == true ||
+                    (isSaleScheduled == null && currentProduct.isSaleScheduled)) {
+                    saleStartDate ?: product.saleStartDateGmt
+                } else viewState.storedProduct?.saleStartDateGmt
             )
             viewState = viewState.copy(productDraft = updatedProduct)
 
@@ -719,15 +730,28 @@ class ProductDetailViewModel @AssistedInject constructor(
 
     private fun updateCards() {
         viewState.productDraft?.let {
-            launch(dispatchers.computation) {
-                val cards = cardBuilder.buildPropertyCards(it)
-                withContext(dispatchers.main) {
-                    _productDetailCards.value = cards
-                }
-            }
+            setupProductDetailCards(product = it)
         }
         fetchBottomSheetList()
     }
+
+    private fun setupProductDetailCards(product: Product? = null): Job {
+        return launch(dispatchers.computation) {
+            val cards = when (navArgs.isAddProduct) {
+                true -> addProductCardBuilder.buildPropertyCards()
+                else -> {
+                    product?.let {
+                        editProductCardBuilder.buildPropertyCards(product = it)
+                    }
+                }
+            }
+            withContext(dispatchers.main) {
+                _productDetailCards.value = cards
+            }
+        }
+    }
+
+    fun updateProductAddCards(description: String) = addProductCardBuilder.updateCards(description)
 
     fun fetchBottomSheetList() {
         val featureFlagCondition = FeatureFlag.PRODUCT_RELEASE_M3.isEnabled() || viewState.productDraft?.type == SIMPLE
