@@ -154,7 +154,7 @@ class ProductDetailViewModel @AssistedInject constructor(
     }
 
     private val addProductCardBuilder by lazy {
-        AddProductDetailCardBuilder(this, resources)
+        AddProductDetailCardBuilder(this, resources, currencyFormatter, parameters)
     }
 
     private val _productDetailBottomSheetList = MutableLiveData<List<ProductDetailBottomSheetUiItem>>()
@@ -1346,8 +1346,20 @@ class ProductDetailViewModel @AssistedInject constructor(
         override val height: Float = 0.0F,
         override val weight: Float = 0.0F,
         override val type: ProductType = SIMPLE,
-        override val isVirtual: Boolean = false
+        override val isVirtual: Boolean = false,
+        val productPricing: AddNewProductPricing? = AddNewProductPricing()
     ) : Parcelable, IProduct
+
+    @Parcelize
+    data class AddNewProductPricing(
+        val regularPrice: BigDecimal? = BigDecimal.ZERO,
+        val salePrice: BigDecimal? = BigDecimal.ZERO,
+        val isSaleScheduled: Boolean = false,
+        val saleStartDateGmt: Date? = null,
+        val saleEndDateGmt: Date? = null,
+        val taxClass: String? = null,
+        val taxStatus: ProductTaxStatus? = null
+    ): Parcelable
 
     /**
      * Update all of the add new product fields that are edited by the user upon creation
@@ -1360,7 +1372,12 @@ class ProductDetailViewModel @AssistedInject constructor(
         localProductImages: List<Image>? = null,
         newAddProductImagesRemoteUrls: ArrayList<String>? = null,
         type: ProductType? = null,
-        isVirtual: Boolean? = null
+        isVirtual: Boolean? = null,
+        length: Float? = null,
+        width: Float? = null,
+        height: Float? = null,
+        weight: Float? = null,
+        productPricing: AddNewProductPricing? = null
     ) {
         viewState.addNewProductDraft?.let { newProduct ->
             val updatedNewProduct = newProduct.copy(
@@ -1371,10 +1388,19 @@ class ProductDetailViewModel @AssistedInject constructor(
                 newAddProductImagesRemoteUrls =
                 newAddProductImagesRemoteUrls ?: newProduct.newAddProductImagesRemoteUrls,
                 type = type ?: newProduct.type,
-                isVirtual = isVirtual ?: newProduct.isVirtual
+                isVirtual = isVirtual ?: newProduct.isVirtual,
+                productPricing = updateProductPricing(productPricing, newProduct.productPricing)
             )
             viewState = viewState.copy(addNewProductDraft = updatedNewProduct)
         }
+    }
+
+    private fun updateProductPricing(
+        oldProductPricing: AddNewProductPricing?,
+        newProductPricing: AddNewProductPricing?
+    ): AddNewProductPricing? {
+        // todo
+        return null
     }
 
     @AssistedInject.Factory
