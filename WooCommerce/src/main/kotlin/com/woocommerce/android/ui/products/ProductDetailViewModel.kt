@@ -11,8 +11,6 @@ import com.woocommerce.android.R.string
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTracker.Stat
 import com.woocommerce.android.analytics.AnalyticsTracker.Stat.PRODUCT_DETAIL_IMAGE_TAPPED
-import com.woocommerce.android.analytics.AnalyticsTracker.Stat.PRODUCT_DETAIL_VIEW_AFFILIATE_TAPPED
-import com.woocommerce.android.analytics.AnalyticsTracker.Stat.PRODUCT_DETAIL_VIEW_EXTERNAL_TAPPED
 import com.woocommerce.android.annotations.OpenClassOnDebug
 import com.woocommerce.android.di.ViewModelAssistedFactory
 import com.woocommerce.android.extensions.addNewItem
@@ -343,6 +341,7 @@ class ProductDetailViewModel @AssistedInject constructor(
                 hasChanges = hasSettingsChanges()
             }
             is ExitExternalLink -> {
+                eventName = Stat.EXTERNAL_PRODUCT_LINK_SETTINGS_DONE_BUTTON_TAPPED
                 hasChanges = hasExternalLinkChanges()
             }
             is ExitProductCategories -> {
@@ -421,16 +420,6 @@ class ProductDetailViewModel @AssistedInject constructor(
         viewState.productDraft?.let {
             triggerEvent(ViewProductMenuOrder(it.menuOrder))
         }
-    }
-
-    fun onViewProductOnStoreLinkClicked(url: String) {
-        AnalyticsTracker.track(PRODUCT_DETAIL_VIEW_EXTERNAL_TAPPED)
-        triggerEvent(LaunchUrlInChromeTab(url))
-    }
-
-    fun onAffiliateLinkClicked(url: String) {
-        AnalyticsTracker.track(PRODUCT_DETAIL_VIEW_AFFILIATE_TAPPED)
-        triggerEvent(LaunchUrlInChromeTab(url))
     }
 
     /**
@@ -1164,6 +1153,7 @@ class ProductDetailViewModel @AssistedInject constructor(
     }
 
     fun onAddCategoryButtonClicked() {
+        AnalyticsTracker.track(Stat.PRODUCT_CATEGORY_SETTINGS_ADD_BUTTON_TAPPED)
         triggerEvent(AddProductCategory)
     }
 
