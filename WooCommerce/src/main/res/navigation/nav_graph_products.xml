@@ -224,12 +224,7 @@
     <dialog
         android:id="@+id/productDetailBottomSheetFragment"
         android:name="com.woocommerce.android.ui.products.ProductDetailBottomSheetFragment"
-        tools:layout="@layout/dialog_product_detail_bottom_sheet_list">
-        <argument
-            android:name="remoteProductId"
-            android:defaultValue="0L"
-            app:argType="long" />
-    </dialog>
+        tools:layout="@layout/dialog_product_detail_bottom_sheet_list"/>
     <fragment
         android:id="@+id/productReviewsFragment"
         android:name="com.woocommerce.android.ui.products.reviews.ProductReviewsFragment"

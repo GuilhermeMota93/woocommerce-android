@@ -30,7 +30,7 @@ import com.woocommerce.android.ui.products.ProductNavigationTarget.ViewProductSh
 import com.woocommerce.android.ui.products.ProductNavigationTarget.ViewProductSlug
 import com.woocommerce.android.ui.products.ProductNavigationTarget.ViewProductStatus
 import com.woocommerce.android.ui.products.ProductNavigationTarget.ViewProductTags
-import com.woocommerce.android.ui.products.ProductNavigationTarget.ViewProductTypes
+import com.woocommerce.android.ui.products.ProductNavigationTarget.ViewProductDetailTypes
 import com.woocommerce.android.ui.products.ProductNavigationTarget.ViewProductVariations
 import com.woocommerce.android.ui.products.ProductNavigationTarget.ViewProductVisibility
 import com.woocommerce.android.ui.products.categories.ProductCategoriesFragmentDirections
@@ -199,13 +199,13 @@ class ProductNavigator @Inject constructor() {
 
             is ViewProductDetailBottomSheet -> {
                 val action = ProductDetailFragmentDirections
-                    .actionGlobalProductDetailBottomSheetFragment(target.remoteId)
+                    .actionGlobalProductDetailBottomSheetFragment()
                 fragment.findNavController().navigateSafely(action)
             }
 
-            is ViewProductTypes -> {
+            is ViewProductDetailTypes -> {
                 val action = ProductDetailFragmentDirections
-                    .actionProductDetailFragmentToProductTypesBottomSheetFragment(target.remoteId)
+                    .actionProductDetailFragmentToProductTypesBottomSheetFragment()
                 fragment.findNavController().navigateSafely(action)
             }
 

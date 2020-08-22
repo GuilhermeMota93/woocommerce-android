@@ -14,6 +14,8 @@ import com.woocommerce.android.ui.products.ProductStatus
 import com.woocommerce.android.ui.products.ProductStatus.PRIVATE
 import com.woocommerce.android.ui.products.ProductStatus.PUBLISH
 import com.woocommerce.android.ui.products.ProductStockStatus
+import com.woocommerce.android.ui.products.ProductType
+import com.woocommerce.android.ui.products.ProductType.VARIABLE
 import kotlinx.android.parcel.Parcelize
 import org.wordpress.android.fluxc.model.WCProductVariationModel
 import org.wordpress.android.fluxc.model.WCProductVariationModel.ProductVariantOption
@@ -38,7 +40,6 @@ data class ProductVariation(
     val optionName: String,
     var priceWithCurrency: String? = null,
     val isPurchasable: Boolean,
-    val isVirtual: Boolean,
     val isDownloadable: Boolean,
     val isStockManaged: Boolean,
     val description: String,
@@ -48,7 +49,9 @@ data class ProductVariation(
     override val length: Float,
     override val width: Float,
     override val height: Float,
-    override val weight: Float
+    override val weight: Float,
+    override val type: ProductType,
+    override val isVirtual: Boolean
 ) : Parcelable, IProduct {
     override fun equals(other: Any?): Boolean {
         val variation = other as? ProductVariation
@@ -166,7 +169,8 @@ fun WCProductVariationModel.toAppModel(): ProductVariation {
         length = this.length.toFloatOrNull() ?: 0f,
         width = this.width.toFloatOrNull() ?: 0f,
         height = this.height.toFloatOrNull() ?: 0f,
-        weight = this.weight.toFloatOrNull() ?: 0f
+        weight = this.weight.toFloatOrNull() ?: 0f,
+        type = VARIABLE
     )
 }
 

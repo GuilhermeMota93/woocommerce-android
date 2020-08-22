@@ -10,10 +10,6 @@
         android:name="com.woocommerce.android.ui.products.ProductTypesBottomSheetFragment"
         tools:layout="@layout/dialog_product_detail_bottom_sheet_list">
         <argument
-            android:name="remoteProductId"
-            android:defaultValue="0L"
-            app:argType="long" />
-        <argument
             android:name="isAddProduct"
             android:defaultValue="false"
             app:argType="boolean" />

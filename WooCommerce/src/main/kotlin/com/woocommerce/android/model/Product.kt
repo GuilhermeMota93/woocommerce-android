@@ -32,7 +32,6 @@ data class Product(
     val description: String,
     val shortDescription: String,
     val slug: String,
-    val type: ProductType,
     val status: ProductStatus?,
     val catalogVisibility: ProductCatalogVisibility?,
     val isFeatured: Boolean,
@@ -42,7 +41,6 @@ data class Product(
     val firstImageUrl: String?,
     val totalSales: Int,
     val reviewsAllowed: Boolean,
-    val isVirtual: Boolean,
     val ratingCount: Int,
     val averageRating: Float,
     val permalink: String,
@@ -76,7 +74,9 @@ data class Product(
     override val length: Float,
     override val width: Float,
     override val height: Float,
-    override val weight: Float
+    override val weight: Float,
+    override val type: ProductType,
+    override val isVirtual: Boolean
 ) : Parcelable, IProduct {
     companion object {
         const val TAX_CLASS_DEFAULT = "standard"
@@ -341,19 +341,6 @@ data class Product(
                 groupedProductIds = updatedProduct.groupedProductIds
             )
         } ?: this.copy()
-    }
-
-    @StringRes
-    fun getProductTypeFormattedForDisplay(): Int {
-        return when (this.type) {
-            ProductType.SIMPLE -> {
-                if (this.isVirtual) R.string.product_type_virtual
-                else R.string.product_type_physical
-            }
-            ProductType.VARIABLE -> R.string.product_type_variable
-            ProductType.GROUPED -> R.string.product_type_grouped
-            ProductType.EXTERNAL -> R.string.product_type_external
-        }
     }
 }
 

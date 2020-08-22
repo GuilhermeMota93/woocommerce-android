@@ -1,12 +1,16 @@
 package com.woocommerce.android.ui.products
 
 import com.woocommerce.android.R
+import com.woocommerce.android.R.drawable
+import com.woocommerce.android.R.string
 import com.woocommerce.android.analytics.AnalyticsTracker.Stat.PRODUCT_DETAIL_VIEW_PRODUCT_DESCRIPTION_TAPPED
+import com.woocommerce.android.analytics.AnalyticsTracker.Stat.PRODUCT_DETAIL_VIEW_PRODUCT_TYPE_TAPPED
 import com.woocommerce.android.extensions.addIfNotEmpty
 import com.woocommerce.android.extensions.fastStripHtml
 import com.woocommerce.android.extensions.filterNotEmpty
 import com.woocommerce.android.ui.products.ProductDetailViewModel.AddNewProduct
 import com.woocommerce.android.ui.products.ProductNavigationTarget.ViewProductDescriptionEditor
+import com.woocommerce.android.ui.products.ProductNavigationTarget.ViewProductDetailTypes
 import com.woocommerce.android.ui.products.models.ProductProperty
 import com.woocommerce.android.ui.products.models.ProductProperty.ComplexProperty
 import com.woocommerce.android.ui.products.models.ProductProperty.Editable
@@ -31,7 +35,8 @@ class AddProductDetailCardBuilder(
             type = PRIMARY,
             properties = listOf(
                 addNewProduct.title(),
-                addNewProduct.description()
+                addNewProduct.description(),
+                addNewProduct.productType()
             ).filterNotEmpty()
         )
     }
@@ -69,5 +74,19 @@ class AddProductDetailCardBuilder(
             ),
             PRODUCT_DETAIL_VIEW_PRODUCT_DESCRIPTION_TAPPED
         )
+    }
+
+    private fun AddNewProduct.productType(): ProductProperty? {
+        val productType = resources.getString(this.getProductTypeFormattedForDisplay())
+        return ComplexProperty(
+            string.product_type,
+            resources.getString(string.product_detail_product_type_hint, productType),
+            drawable.ic_gridicons_product
+        ) {
+            viewModel.onEditProductCardClicked(
+                ViewProductDetailTypes,
+                PRODUCT_DETAIL_VIEW_PRODUCT_TYPE_TAPPED
+            )
+        }
     }
 }

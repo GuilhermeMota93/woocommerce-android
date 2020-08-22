@@ -105,7 +105,10 @@ class ProductDetailFragment : BaseProductFragment(), OnGalleryImageClickListener
 
     private fun setupResultHandlers(viewModel: ProductDetailViewModel) {
         handleResult<ProductTypesBottomSheetUiItem>(ProductTypesBottomSheetFragment.KEY_PRODUCT_TYPE_RESULT) {
-            viewModel.updateProductDraft(type = it.type, isVirtual = it.isVirtual)
+            when (navArgs.isAddProduct) {
+                true -> viewModel.updateAddNewProductDraft(type = it.type, isVirtual = it.isVirtual)
+                else -> viewModel.updateProductDraft(type = it.type, isVirtual = it.isVirtual)
+            }
             changesMade()
         }
         handleResult<List<Long>>(GroupedProductListFragment.KEY_GROUPED_PRODUCT_IDS_RESULT) {

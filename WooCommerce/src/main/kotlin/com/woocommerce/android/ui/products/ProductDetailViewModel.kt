@@ -27,6 +27,7 @@ import com.woocommerce.android.media.ProductImagesService.Companion.OnProductIma
 import com.woocommerce.android.media.ProductImagesService.Companion.OnProductImagesUpdateCompletedEvent
 import com.woocommerce.android.media.ProductImagesService.Companion.OnProductImagesUpdateStartedEvent
 import com.woocommerce.android.media.ProductImagesServiceWrapper
+import com.woocommerce.android.model.IProduct
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.model.Product.Image
 import com.woocommerce.android.model.ProductCategory
@@ -1338,9 +1339,15 @@ class ProductDetailViewModel @AssistedInject constructor(
         val title: String? = null,
         val description: String? = null,
         val localImageUris: List<Uri>? = null,
-        val localProductImages: List<Product.Image>? = null,
-        val newAddProductImagesRemoteUrls: ArrayList<String>? = null
-    ) : Parcelable
+        val localProductImages: List<Image>? = null,
+        val newAddProductImagesRemoteUrls: ArrayList<String>? = null,
+        override val length: Float = 0.0F,
+        override val width: Float = 0.0F,
+        override val height: Float = 0.0F,
+        override val weight: Float = 0.0F,
+        override val type: ProductType = SIMPLE,
+        override val isVirtual: Boolean = false
+    ) : Parcelable, IProduct
 
     /**
      * Update all of the add new product fields that are edited by the user upon creation
@@ -1351,7 +1358,9 @@ class ProductDetailViewModel @AssistedInject constructor(
         title: String? = null,
         localImageUris: List<Uri>? = null,
         localProductImages: List<Image>? = null,
-        newAddProductImagesRemoteUrls: ArrayList<String>? = null
+        newAddProductImagesRemoteUrls: ArrayList<String>? = null,
+        type: ProductType? = null,
+        isVirtual: Boolean? = null
     ) {
         viewState.addNewProductDraft?.let { newProduct ->
             val updatedNewProduct = newProduct.copy(
@@ -1360,7 +1369,9 @@ class ProductDetailViewModel @AssistedInject constructor(
                 localImageUris = localImageUris ?: newProduct.localImageUris,
                 localProductImages = localProductImages ?: newProduct.localProductImages,
                 newAddProductImagesRemoteUrls =
-                newAddProductImagesRemoteUrls ?: newProduct.newAddProductImagesRemoteUrls
+                newAddProductImagesRemoteUrls ?: newProduct.newAddProductImagesRemoteUrls,
+                type = type ?: newProduct.type,
+                isVirtual = isVirtual ?: newProduct.isVirtual
             )
             viewState = viewState.copy(addNewProductDraft = updatedNewProduct)
         }

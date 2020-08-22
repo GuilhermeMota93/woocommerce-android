@@ -1,12 +1,17 @@
 package com.woocommerce.android.model
 
+import androidx.annotation.StringRes
+import com.woocommerce.android.R
 import com.woocommerce.android.extensions.formatToString
+import com.woocommerce.android.ui.products.ProductType
 
 interface IProduct {
     val length: Float
     val width: Float
     val height: Float
     val weight: Float
+    val type: ProductType
+    val isVirtual: Boolean
 
     /**
      * Formats the [Product] weight with the given [weightUnit]
@@ -38,5 +43,18 @@ interface IProduct {
         } else {
             ""
         }.trim()
+    }
+
+    @StringRes
+    fun getProductTypeFormattedForDisplay(): Int {
+        return when (this.type) {
+            ProductType.SIMPLE -> {
+                if (this.isVirtual) R.string.product_type_virtual
+                else R.string.product_type_physical
+            }
+            ProductType.VARIABLE -> R.string.product_type_variable
+            ProductType.GROUPED -> R.string.product_type_grouped
+            ProductType.EXTERNAL -> R.string.product_type_external
+        }
     }
 }
