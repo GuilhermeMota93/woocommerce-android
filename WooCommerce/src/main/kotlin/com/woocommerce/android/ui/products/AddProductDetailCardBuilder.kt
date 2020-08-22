@@ -16,7 +16,8 @@ import com.woocommerce.android.viewmodel.ResourceProvider
 
 class AddProductDetailCardBuilder(
     private val viewModel: ProductDetailViewModel,
-    private val resources: ResourceProvider) {
+    private val resources: ResourceProvider
+) {
     fun buildPropertyCards(addNewProduct: AddNewProduct): List<ProductPropertyCard> {
         val cards = mutableListOf<ProductPropertyCard>()
 
